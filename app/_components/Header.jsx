@@ -1,14 +1,62 @@
-import React from 'react'
-import Image from 'next/image'
+'use client'
+import React, { useState, Suspense } from 'react'
+import LogoTitle from './_components/LogoTitle'
 import { Button } from '@/components/ui/button'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import LogoDesc from './_components/LogoDesc'
+import LogoPalette from './_components/LogoPalette'
+import LogoIdea from './_components/LogoIdea'
+import LogoDesigns from './_components/LogoDesigns'
+import PricingModel from './_components/PricingModel'
 
-function Header() {
+// Create a wrapper component for LogoTitle
+function LogoTitleWrapper() {
   return (
-    <div className='px-10 lg:px-32 xl:px-32 2xl:px-56 p-4 flex justify-between items-center shadow-sm'>
-        <Image src={'/logo.svg'} alt='logo' width={130} height={100}/>
-        <Button>Get Started</Button>
+    <Suspense fallback={<div>Loading...</div>}>
+      <LogoTitle />
+      
+    </Suspense>
+  )
+}
+
+function CreateLogo() {
+  const [step, setStep] = useState(1)
+  const [formData, setFormData] = useState()
+  
+  const onHandleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  return (
+    <div className='mt-28 p-10 border rounded-xl 2xl:mx-72'>
+      {step == 1 ? 
+        <LogoTitleWrapper onHandleInputChange={(v) => onHandleInputChange('title', v)} 
+          formData={formData}/> :
+        step == 2 ?
+          <LogoDesc onHandleInputChange={(v) => onHandleInputChange('desc', v)}
+            formData={formData}/> :
+        step == 3 ?
+          <LogoPalette onHandleInputChange={(v) => onHandleInputChange('palette', v)}
+            formData={formData}/> :
+        step == 4 ?
+          <LogoDesigns onHandleInputChange={(v) => onHandleInputChange('design', v)}
+            formData={formData}/> :
+        step == 5 ?
+          <LogoIdea onHandleInputChange={(v) => onHandleInputChange('idea', v)}
+            formData={formData}/> :
+        step == 6 ?
+          <PricingModel onHandleInputChange={(v) => onHandleInputChange('pricing', v)}
+            formData={formData}/> : null
+      }
+      <div className='flex items-center justify-between mt-10'>
+        {step != 1 && <Button variant="outline" onClick={() => setStep(step-1)}><ArrowLeft/>Previous</Button>}
+        <Button onClick={() => setStep(step+1)}><ArrowRight/>Continue</Button>
+      </div>
     </div>
   )
 }
 
-export default Header
+export default CreateLogo
